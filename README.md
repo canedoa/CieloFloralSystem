@@ -109,4 +109,24 @@ para la gestión completa de una floristería:
 git clone https://github.com/caneoda/CieloFloralSystem.git
 
 
+---
+
+## ▶️ Cómo ejecutar
+1. Clona el repositorio  
+2. Abre la solución `.sln` con Visual Studio  
+3. Restaura las dependencias  
+4. Coloca tu `config.txt`  
+5. Ejecuta el proyecto  
+
+---
+
+## 👩‍💻 Autora
+Desarrollado por **Celeste A. Cañedo** 💙  
+Si te gustó el proyecto, ¡déjale una estrella! ⭐
+
+---
+
+
+
+
 
