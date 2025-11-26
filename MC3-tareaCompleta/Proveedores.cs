@@ -8,17 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace CieloFloral
 {
-    public partial class Proveedores: Form
+    public partial class Proveedores : Form
     {
+        private string connectionString;
+
         public Proveedores()
         {
             InitializeComponent();
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+            connectionString = File.ReadAllText(configPath).Trim();
         }
-
-        string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com; database=bz3dmbyxjjyg90shengb; user=updsowqagabncdsq; password=O7g08TzRF8QQEc9E27NE; port=3306;";
 
         private void btnGuardarProducto_Click(object sender, EventArgs e)
         {
@@ -35,9 +38,6 @@ namespace CieloFloral
                 string telefono = texttelefono.Text;
                 bool ActivoCliente = chActivoCliente.Checked;
                 int valorActivo = ActivoCliente ? 1 : 0;
-
-
-
 
                 using (MySqlConnection conn = new MySqlConnection(connectionString))
                 {
@@ -57,18 +57,11 @@ namespace CieloFloral
 
                     MessageBox.Show("Proveedor agregado correctamente.");
                 }
-
-
             }
-
             catch (Exception ex)
             {
-
                 MessageBox.Show("Error al insertar Cliente: " + ex.Message);
-
             }
-
-
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)

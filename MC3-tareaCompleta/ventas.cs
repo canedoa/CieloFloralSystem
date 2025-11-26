@@ -9,20 +9,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MC3_tareaCompleta;
-
+using System.IO;
 
 namespace CieloFloral
 {
-    public partial class ventas: Form
+    public partial class ventas : Form
     {
         private int idUsuarioActual;
+        private string connectionString;
+
         public ventas(int idUsuario)
         {
             InitializeComponent();
             idUsuarioActual = idUsuario;
+
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+            connectionString = File.ReadAllText(configPath).Trim();
         }
-        string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com; database=bz3dmbyxjjyg90shengb; user=updsowqagabncdsq; password=O7g08TzRF8QQEc9E27NE; port=3306;";
-        
+
         private void ventas_Load(object sender, EventArgs e)
         {
             CargarProductos();
@@ -94,10 +98,8 @@ namespace CieloFloral
             string nombreProducto = cbProductos.Text;
             int cantidad = Convert.ToInt32(txtCantidad.Text);
 
-            // Traer el precio con IVA del producto desde la base de datos
-            decimal precioConIVA = ObtenerPrecioProducto(idProducto); 
+            decimal precioConIVA = ObtenerPrecioProducto(idProducto);
 
-            // Desglosamos el IVA (16%)
             decimal precioSinIVA = precioConIVA / 1.16m;
             decimal ivaUnitario = precioConIVA - precioSinIVA;
 
@@ -108,7 +110,7 @@ namespace CieloFloral
             CalcularTotales();
         }
 
-        
+
         private decimal ObtenerPrecioProducto(int idProducto)
         {
             decimal precio = 0.00m;  // Valor inicial, en caso de que no se encuentre el producto
@@ -233,7 +235,7 @@ namespace CieloFloral
                     }
 
                     trans.Commit();
-                    MessageBox.Show("✅ Venta registrada correctamente.");
+                    MessageBox.Show(" Venta registrada correctamente.");
 
                     // Limpiar después de registrar
                     dgvDetalleVenta.Rows.Clear();

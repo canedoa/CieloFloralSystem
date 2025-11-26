@@ -9,17 +9,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Resources.ResXFileRef;
+using System.IO;
 
 namespace CieloFloral
 {
-    public partial class Usuarios: Form
+    public partial class Usuarios : Form
     {
+        private string connectionString;
+
         public Usuarios()
         {
             InitializeComponent();
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+            connectionString = File.ReadAllText(configPath).Trim();
         }
-        private string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com; database=bz3dmbyxjjyg90shengb; user=updsowqagabncdsq; password=O7g08TzRF8QQEc9E27NE; port=3306;";
-       
+
         private void CargarUsuarios()
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -35,7 +39,7 @@ namespace CieloFloral
                         adapter.Fill(tablaUsuarios);
                         dgvUsuarios.DataSource = tablaUsuarios;
 
-                       // Convertir columna "activo" en checkbox
+                        // Convertir columna "activo" en checkbox
                         dgvUsuarios.Columns["activo"].HeaderText = "Activo";
                         dgvUsuarios.Columns["activo"].ReadOnly = false;
                         dgvUsuarios.Columns["activo"].CellTemplate = new DataGridViewCheckBoxCell();
@@ -112,6 +116,9 @@ namespace CieloFloral
             }
         }
 
-       
+        private void dgvUsuarios_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

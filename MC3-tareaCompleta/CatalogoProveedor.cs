@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;           
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,15 +12,30 @@ using System.Windows.Forms;
 
 namespace CieloFloral
 {
-    public partial class CatalogoProveedor: Form
+    public partial class CatalogoProveedor : Form
     {
+       
+        private string connectionString;
+
         public CatalogoProveedor()
         {
             InitializeComponent();
+
+           
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+
+            if (!File.Exists(configPath))
+            {
+                MessageBox.Show("No se encontró el archivo config.txt con la cadena de conexión.",
+                    "Error de configuración",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            else
+            {
+                connectionString = File.ReadAllText(configPath).Trim();
+            }
         }
-
-        string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com; database=bz3dmbyxjjyg90shengb; user=updsowqagabncdsq; password=O7g08TzRF8QQEc9E27NE; port=3306;";
-
 
         private void CargarDatosProveedores()
         {
@@ -37,7 +53,10 @@ namespace CieloFloral
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error al cargar los datos: " + ex.Message);
+                    MessageBox.Show("Error al cargar los datos: " + ex.Message,
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
         }

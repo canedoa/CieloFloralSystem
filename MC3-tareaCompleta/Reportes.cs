@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
-using iTextSharp.text; 
-using iTextSharp.text.pdf; 
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.draw;
 using System.Net;
 
@@ -20,15 +20,33 @@ namespace CieloFloral
 
     public partial class Reportes : Form
     {
+        private string connectionString;
+        private string smtpEmail;
+        private string smtpPassword;
+
         public Reportes()
         {
             InitializeComponent();
             this.Load += Reportes_Load;
             dgvProductos.CellContentClick += dgvProductos_CellContentClick;
+
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+            if (File.Exists(configPath))
+            {
+                connectionString = File.ReadAllText(configPath).Trim();
+            }
+
+            string emailConfigPath = Path.Combine(Application.StartupPath, "emailConfig.txt");
+            if (File.Exists(emailConfigPath))
+            {
+                string[] lines = File.ReadAllLines(emailConfigPath);
+                if (lines.Length >= 2)
+                {
+                    smtpEmail = lines[0].Trim();
+                    smtpPassword = lines[1].Trim();
+                }
+            }
         }
-
-        private string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com; database=bz3dmbyxjjyg90shengb; user=updsowqagabncdsq; password=O7g08TzRF8QQEc9E27NE; port=3306;";
-
 
         private void CargarDatos()
         {
@@ -292,9 +310,8 @@ namespace CieloFloral
 
                 try
                 {
-                    // Preparar y enviar el correo
                     MailMessage mensaje = new MailMessage();
-                    mensaje.From = new MailAddress("canedo.amaya.celeste@gmail.com");
+                    mensaje.From = new MailAddress(smtpEmail);
                     mensaje.To.Add(txtCorreoDestino.Text.Trim());
                     mensaje.Subject = "Te envío la cotización solicitada";
                     mensaje.Body = "Adjunto encontrarás el archivo PDF que seleccionaste.";
@@ -303,7 +320,7 @@ namespace CieloFloral
                     mensaje.Attachments.Add(adjunto);
 
                     SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-                    smtp.Credentials = new NetworkCredential("canedo.amaya.celeste@gmail.com", "qnbdxxjovsbwtkjz");
+                    smtp.Credentials = new NetworkCredential(smtpEmail, smtpPassword);
                     smtp.EnableSsl = true;
 
                     smtp.Send(mensaje);

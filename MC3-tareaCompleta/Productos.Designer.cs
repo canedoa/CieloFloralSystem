@@ -110,7 +110,7 @@
             this.txtbProducto.Name = "txtbProducto";
             this.txtbProducto.Size = new System.Drawing.Size(292, 31);
             this.txtbProducto.TabIndex = 5;
-           
+            this.txtbProducto.TextChanged += new System.EventHandler(this.txtbProducto_TextChanged);
             // 
             // txtbPrecio
             // 

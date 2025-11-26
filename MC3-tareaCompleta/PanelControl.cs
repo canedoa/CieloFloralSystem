@@ -14,13 +14,13 @@ using iText.Layout.Element;
 using iText.Layout.Properties;
 using iText.Kernel.Colors;
 using CieloFloral;
-
+using System.IO;
 
 namespace MC3_tareaCompleta
 {
-    public partial class FormMenu: Form
+    public partial class FormMenu : Form
     {
-        private string connectionString = "server=sql12.freesqldatabase.com; database=sql12762828; user=sql12762828; password=Sskz29wJnx; port=3306;";
+        private string connectionString;
         public FormMenu(int idUsuario, string nombreUsuario)
         {
             InitializeComponent();
@@ -28,37 +28,34 @@ namespace MC3_tareaCompleta
             nombreUsuarioActual = nombreUsuario;
             lbUsuario.Text = "Bienvenido: " + nombreUsuarioActual;
 
-
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+            connectionString = File.ReadAllText(configPath).Trim();
         }
         private int idUsuarioActual;
         private string nombreUsuarioActual;
-        private void AbrirFormHijo(object formHijo){
-                if (this.panelContenedor.Controls.Count > 0)//preguntamos si hay algun contendor
-                
-                    this.panelContenedor.Controls.Clear();//removemos si hay algo
-                    Form fh = formHijo as Form;
-                    fh.TopLevel = false;// que no se abra uno nuevo sino que se agregue al espacio
-                    this.panelContenedor.Controls.Add(fh);
-                    fh.Dock = DockStyle.Fill; //que ocupe todo el espacio
-                    this.panelContenedor.Tag = fh;
-                    fh.Show();
+        private void AbrirFormHijo(object formHijo)
+        {
+            if (this.panelContenedor.Controls.Count > 0)
+                this.panelContenedor.Controls.Clear();
+            Form fh = formHijo as Form;
+            fh.TopLevel = false;
+            this.panelContenedor.Controls.Add(fh);
+            fh.Dock = DockStyle.Fill;
+            this.panelContenedor.Tag = fh;
+            fh.Show();
 
-
-            // Si el formulario es Catalogo, llamar a CargarDatos()
             if (formHijo is Catalogo catalogoForm)
             {
                 catalogoForm.CargarDatos();
             }
 
         }
-           
+
         private void AgregarProducto_Click(object sender, EventArgs e)
         {
             AbrirFormHijo(new Productos());
-            
-            
         }
-       
+
         private void VerCatalogo_Click(object sender, EventArgs e)
         {
             AbrirFormHijo(new Catalogo());

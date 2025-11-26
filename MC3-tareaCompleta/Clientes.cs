@@ -9,17 +9,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Resources.ResXFileRef;
+using System.IO;
 
 namespace CieloFloral
 {
-    public partial class Clientes: Form
+    public partial class Clientes : Form
     {
         public Clientes()
         {
             InitializeComponent();
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+            connectionString = File.ReadAllText(configPath).Trim();
         }
 
-        private string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com; database=bz3dmbyxjjyg90shengb; user=updsowqagabncdsq; password=O7g08TzRF8QQEc9E27NE; port=3306;";
+        private string connectionString;
 
 
 
@@ -27,7 +30,7 @@ namespace CieloFloral
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
-                
+
 
                 try
                 {
@@ -67,7 +70,7 @@ namespace CieloFloral
 
 
             }
-            
+
 
         }
 
@@ -76,7 +79,7 @@ namespace CieloFloral
         {
             CargarClientes();
             dgvClientes.CellClick += dgvClientes_CellClick;
-            
+
         }
         private void ActualizarCliente(int id, string nombre, string apellido, string correo, string telefono, bool activo)
         {

@@ -12,30 +12,46 @@ using System.Windows.Forms;
 
 namespace MC3_tareaCompleta
 {
-    public partial class Catalogo: Form
+    public partial class Catalogo : Form
     {
-        
+
+        private string connectionString;
+
         public Catalogo()
         {
-            InitializeComponent(); 
+            InitializeComponent();
 
+            
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+
+            if (!File.Exists(configPath))
+            {
+                MessageBox.Show("No se encontró el archivo config.txt con la cadena de conexión.",
+                    "Error de configuración",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            else
+            {
+                connectionString = File.ReadAllText(configPath).Trim();
+            }
         }
+
         private void Catalogo_Load(object sender, EventArgs e)
         {
             this.dgvCatalogo.CellClick += new DataGridViewCellEventHandler(this.dgvCatalogo_CellContentClick);
-
-
         }
 
         public DataGridView ObtenerDataGridView()
         {
             return dgvCatalogo;
         }
+
         public void CargarDatos()
         {
             try
             {
-                 string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com; database=bz3dmbyxjjyg90shengb; user=updsowqagabncdsq; password=O7g08TzRF8QQEc9E27NE; port=3306;";
+                
 
                 using (MySqlConnection conn = new MySqlConnection(connectionString))
                 {
@@ -51,10 +67,13 @@ namespace MC3_tareaCompleta
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar productos: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al cargar productos: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
-        
+
         private void dgvCatalogo_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // para verificar que se dio clic en la columna de botones "VisualizarProducto"
@@ -66,13 +85,12 @@ namespace MC3_tareaCompleta
                 // Crea una nueva instancia de FormImagen
                 FormImagen formImagen = new FormImagen();
 
-                //  MostrarImagen y pasa la cadena base64
+                // MostrarImagen y pasa la cadena base64
                 formImagen.MostrarImagen(base64Image);
 
                 // mostrar formulario con la imagen
                 formImagen.Show();
             }
-
         }
 
         private void dgvCatalogo_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -88,8 +106,12 @@ namespace MC3_tareaCompleta
 
                 // Calcula el radio para un círculo o elipse
                 int radius = Math.Min(cellRect.Width, cellRect.Height) / 2;
-                Rectangle circleRect = new Rectangle(cellRect.X + (cellRect.Width / 2 - radius), cellRect.Y + (cellRect.Height / 2 - radius), radius * 2, radius * 2);
-
+                Rectangle circleRect = new Rectangle(
+                    cellRect.X + (cellRect.Width / 2 - radius),
+                    cellRect.Y + (cellRect.Height / 2 - radius),
+                    radius * 2,
+                    radius * 2
+                );
 
                 // Dibuja el fondo del botón
                 using (Brush brush = new SolidBrush(Color.LightSkyBlue))  // Cambia el color de fondo
@@ -105,20 +127,19 @@ namespace MC3_tareaCompleta
 
                 using (Brush textBrush = new SolidBrush(Color.White))
                 {
-                    // Si e.Value es null, muestra "Previsualizar". Si tiene valor, muestra ese valor.
+                    // Si e.Value es null, muestra "Ver". Si tiene valor, muestra ese valor.
                     string displayText = e.Value?.ToString() ?? "Ver";
 
                     StringFormat stringFormat = new StringFormat
                     {
-                        Alignment = StringAlignment.Center, // Alinea el texto al centro
-                        LineAlignment = StringAlignment.Center // Alinea el texto verticalmente en el centro
+                        Alignment = StringAlignment.Center,      // Alinea el texto al centro
+                        LineAlignment = StringAlignment.Center  // Alinea el texto verticalmente en el centro
                     };
 
                     // Dibuja el texto dentro del círculo
                     e.Graphics.DrawString(displayText, e.CellStyle.Font, textBrush, circleRect, stringFormat);
                 }
             }
-
         }
     }
 }

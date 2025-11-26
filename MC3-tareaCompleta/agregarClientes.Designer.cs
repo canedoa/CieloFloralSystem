@@ -129,6 +129,7 @@
             this.txtbNomCliente.Name = "txtbNomCliente";
             this.txtbNomCliente.Size = new System.Drawing.Size(292, 31);
             this.txtbNomCliente.TabIndex = 19;
+            this.txtbNomCliente.TextChanged += new System.EventHandler(this.txtbNomCliente_TextChanged);
             // 
             // lbcorreo
             // 

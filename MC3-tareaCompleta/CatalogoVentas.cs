@@ -20,12 +20,31 @@ namespace CieloFloral
 {
     public partial class CatalogoVentas : Form
     {
+        private string connectionString;
+        private string smtpEmail;
+        private string smtpPassword;
+
         public CatalogoVentas()
         {
             InitializeComponent();
-        }
 
-        string connectionString = "server=bz3dmbyxjjyg90shengb-mysql.services.clever-cloud.com;database=bz3dmbyxjjyg90shengb;user=updsowqagabncdsq;password=O7g08TzRF8QQEc9E27NE;port=3306;SslMode=Preferred;";
+            string configPath = Path.Combine(Application.StartupPath, "config.txt");
+            if (File.Exists(configPath))
+            {
+                connectionString = File.ReadAllText(configPath).Trim();
+            }
+
+            string emailConfigPath = Path.Combine(Application.StartupPath, "emailConfig.txt");
+            if (File.Exists(emailConfigPath))
+            {
+                string[] lines = File.ReadAllLines(emailConfigPath);
+                if (lines.Length >= 2)
+                {
+                    smtpEmail = lines[0].Trim();
+                    smtpPassword = lines[1].Trim();
+                }
+            }
+        }
 
         private void CatalogoVentas_Load(object sender, EventArgs e)
         {
@@ -49,7 +68,7 @@ namespace CieloFloral
                     MySqlDataAdapter adapter = new MySqlDataAdapter(query, connection);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-            
+
                     dgvCatalogoVentas.DataSource = dt;
                 }
                 catch (Exception ex)
@@ -58,32 +77,32 @@ namespace CieloFloral
                 }
             }
         }
-        
-        private void AgregarBotones()
-            {
-                if (!dgvCatalogoVentas.Columns.Contains("btnGenerarPDF"))
-                {
-                    DataGridViewButtonColumn btnPDF = new DataGridViewButtonColumn
-                    {
-                        Name = "btnGenerarPDF",
-                        HeaderText = "Acciones",
-                        Text = "Generar PDF",
-                        UseColumnTextForButtonValue = true
-                    };
-                    dgvCatalogoVentas.Columns.Add(btnPDF);
-                }
 
-                if (!dgvCatalogoVentas.Columns.Contains("btnEnviarCorreo"))
+        private void AgregarBotones()
+        {
+            if (!dgvCatalogoVentas.Columns.Contains("btnGenerarPDF"))
+            {
+                DataGridViewButtonColumn btnPDF = new DataGridViewButtonColumn
                 {
-                    DataGridViewButtonColumn btnMail = new DataGridViewButtonColumn
-                    {
-                        Name = "btnEnviarCorreo",
-                        HeaderText = "Correo",
-                        Text = "Enviar PDF",
-                        UseColumnTextForButtonValue = true
-                    };
-                    dgvCatalogoVentas.Columns.Add(btnMail);
-                }
+                    Name = "btnGenerarPDF",
+                    HeaderText = "Acciones",
+                    Text = "Generar PDF",
+                    UseColumnTextForButtonValue = true
+                };
+                dgvCatalogoVentas.Columns.Add(btnPDF);
+            }
+
+            if (!dgvCatalogoVentas.Columns.Contains("btnEnviarCorreo"))
+            {
+                DataGridViewButtonColumn btnMail = new DataGridViewButtonColumn
+                {
+                    Name = "btnEnviarCorreo",
+                    HeaderText = "Correo",
+                    Text = "Enviar PDF",
+                    UseColumnTextForButtonValue = true
+                };
+                dgvCatalogoVentas.Columns.Add(btnMail);
+            }
         }
 
         private void dgvCatalogoVentas_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -167,10 +186,10 @@ namespace CieloFloral
                 {
                     conn.Open();
 
-               string query = "SELECT p.nombreProducto, p.descripcion, p.precio, p.imgBase64 " +
-               "FROM detalle_venta d " +
-               "INNER JOIN productos p ON d.IdProducto = p.Id " +  // ← nota el espacio al final
-               "WHERE d.IdVenta = @idVenta";
+                    string query = "SELECT p.nombreProducto, p.descripcion, p.precio, p.imgBase64 " +
+                    "FROM detalle_venta d " +
+                    "INNER JOIN productos p ON d.IdProducto = p.Id " +  // ← nota el espacio al final
+                    "WHERE d.IdVenta = @idVenta";
 
 
 
@@ -229,7 +248,7 @@ namespace CieloFloral
         {
             string correo = "";
 
-            
+
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
@@ -261,13 +280,13 @@ namespace CieloFloral
 
                 try
                 {
-                    MailMessage mail = new MailMessage("canedo.amaya.celeste@gmail.com", correo);
+                    MailMessage mail = new MailMessage(smtpEmail, correo);
                     mail.Subject = "Detalle de tu compra";
                     mail.Body = "Estimado Cliente, adjunto a este correo econtrará su comprobante en PDF. Gracias por tu compra.";
                     mail.Attachments.Add(new Attachment(archivoSeleccionado));
 
                     SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-                    smtp.Credentials = new NetworkCredential("canedo.amaya.celeste@gmail.com", "qnbdxxjovsbwtkjz");
+                    smtp.Credentials = new NetworkCredential(smtpEmail, smtpPassword);
                     smtp.EnableSsl = true;
 
                     smtp.Send(mail);
@@ -290,5 +309,5 @@ namespace CieloFloral
 
         }
     }
-       
+
 }
