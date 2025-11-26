@@ -1,0 +1,20 @@
+# Secretos
+config.txt
+
+# Visual Studio
+.vs/
+bin/
+obj/
+packages/
+*.user
+*.suo
+*.cache
+*.log
+*.tmp
+*.dbmdl
+*.pdb
+
+# Build artifacts
+*.exe
+*.dll
+*.json
